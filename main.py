@@ -1,8 +1,8 @@
-import json
 import sys
 from datetime import datetime
 
 from analyzer import analyze_match, find_technologies
+from storage import load_analyses, save_analysis
 
 technologies = [
     "Python",
@@ -24,62 +24,70 @@ my_skills = [
 ]
 
 
-if len(sys.argv) < 2:
-    print("Usage: python main.py <path_to_job_description_file>")
-    sys.exit(1)
+def history():
+    analyses = load_analyses()
+
+    if not analyses:
+        print("No job analyses found.")
+        return
+
+    for data in analyses:
+        print(f"{data['file']} - {data['match']}% - {data['analyzed_at']}")
 
 
-try:
-    with open(sys.argv[1], "r") as file:
-        content = file.read()
-except FileNotFoundError:
-    print(f"File not found: {sys.argv[1]}")
-    sys.exit(1)
+def analyze():
+    if len(sys.argv) < 3:
+        print("Usage: python main.py <path_to_job_description_file>")
+        sys.exit(1)
+
+    try:
+        with open(sys.argv[2], "r") as file:
+            content = file.read()
+    except FileNotFoundError:
+        print(f"File not found: {sys.argv[2]}")
+        sys.exit(1)
+
+    result = find_technologies(technologies, content)
+    matched_skills, missing_skills = analyze_match(my_skills, result)
+
+    print("====== JOB MATCH ======\n")
+    print("Your skills:")
+    if not matched_skills:
+        print("None")
+    else:
+        for skill in matched_skills:
+            print(f"✓ {skill}")
+
+    print("\nMissing:")
+    if not missing_skills:
+        print("None")
+    else:
+        for missing in missing_skills:
+            print(f"✗ {missing}")
+
+    if result:
+        match_percentage = round(len(matched_skills) / len(result) * 100)
+    else:
+        match_percentage = 0
+
+    job_analysis = {
+        "file": sys.argv[2],
+        "match": match_percentage,
+        "matched_skills": matched_skills,
+        "missing_skills": missing_skills,
+        "analyzed_at": datetime.now().isoformat(),
+    }
+
+    print(f"\nMatch: {match_percentage}%")
+    print(f"Job analysis: {job_analysis}")
+
+    save_analysis(job_analysis)
 
 
-result = find_technologies(technologies, content)
-matched_skills, missing_skills = analyze_match(my_skills, result)
+if len(sys.argv) >= 2:
+    command = sys.argv[1]
 
-print("====== JOB MATCH ======\n")
-print("Your skills:")
-if not matched_skills:
-    print("None")
-else:
-    for skill in matched_skills:
-        print(f"✓ {skill}")
-
-
-print("\nMissing:")
-if not missing_skills:
-    print("None")
-else:
-    for missing in missing_skills:
-        print(f"✗ {missing}")
-
-
-if result:
-    match_percentage = round(len(matched_skills) / len(result) * 100)
-else:
-    match_percentage = 0
-
-job_analysis = {
-    "file": sys.argv[1],
-    "match": match_percentage,
-    "matched_skills": matched_skills,
-    "missing_skills": missing_skills,
-    "analyzed_at": datetime.now().isoformat(),
-}
-
-print(f"\nMatch: {match_percentage}%")
-print(f"Job analysis: {job_analysis}")
-
-try:
-    with open("jobs.json", "r") as jobs_file:
-        jobs = json.load(jobs_file)
-except (FileNotFoundError, json.JSONDecodeError):
-    jobs = []
-
-jobs.append(job_analysis)
-
-with open("jobs.json", "w") as jobs_file:
-    json.dump(jobs, jobs_file, indent=2)
+    if command == "analyze":
+        analyze()
+    if command == "history":
+        history()
