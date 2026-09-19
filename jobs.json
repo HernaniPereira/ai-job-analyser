@@ -1,0 +1,56 @@
+[
+  {
+    "file": "job.txt",
+    "match": 0
+  },
+  {
+    "file": "job.txt",
+    "match": 0
+  },
+  {
+    "file": "job.txt",
+    "match": 0,
+    "matched_skills": [],
+    "missing_skills": []
+  },
+  {
+    "file": "job.txt",
+    "match": 0,
+    "matched_skills": [],
+    "missing_skills": []
+  },
+  {
+    "file": "job.txt",
+    "match": 0,
+    "matched_skills": [],
+    "missing_skills": []
+  },
+  {
+    "file": "job.txt",
+    "match": 0,
+    "matched_skills": [],
+    "missing_skills": [],
+    "analyzed_at": "2026-09-19T12:03:05.640636"
+  },
+  {
+    "file": "job.txt",
+    "match": 0,
+    "matched_skills": [],
+    "missing_skills": [],
+    "analyzed_at": "2026-09-19T12:04:03.904686"
+  },
+  {
+    "file": "job.txt",
+    "match": 0,
+    "matched_skills": [],
+    "missing_skills": [],
+    "analyzed_at": "2026-09-19T12:05:28.222824"
+  },
+  {
+    "file": "job.txt",
+    "match": 0,
+    "matched_skills": [],
+    "missing_skills": [],
+    "analyzed_at": "2026-09-19T12:06:45.807743"
+  }
+]
